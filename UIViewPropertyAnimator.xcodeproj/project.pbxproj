@@ -7,8 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D350642124541E4E0084244A /* CardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D350642024541E4E0084244A /* CardViewController.swift */; };
 		D36DEA7724515D2F00DE1E94 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D36DEA7624515D2F00DE1E94 /* AppDelegate.swift */; };
-		D36DEA7924515D2F00DE1E94 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D36DEA7824515D2F00DE1E94 /* SceneDelegate.swift */; };
 		D36DEA7B24515D2F00DE1E94 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D36DEA7A24515D2F00DE1E94 /* ViewController.swift */; };
 		D36DEA7E24515D2F00DE1E94 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D36DEA7C24515D2F00DE1E94 /* Main.storyboard */; };
 		D36DEA8024515D3100DE1E94 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D36DEA7F24515D3100DE1E94 /* Assets.xcassets */; };
@@ -16,9 +16,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		D350642024541E4E0084244A /* CardViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardViewController.swift; sourceTree = "<group>"; };
 		D36DEA7324515D2F00DE1E94 /* UIViewPropertyAnimator.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = UIViewPropertyAnimator.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D36DEA7624515D2F00DE1E94 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		D36DEA7824515D2F00DE1E94 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		D36DEA7A24515D2F00DE1E94 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		D36DEA7D24515D2F00DE1E94 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		D36DEA7F24515D3100DE1E94 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -57,8 +57,8 @@
 			isa = PBXGroup;
 			children = (
 				D36DEA7624515D2F00DE1E94 /* AppDelegate.swift */,
-				D36DEA7824515D2F00DE1E94 /* SceneDelegate.swift */,
 				D36DEA7A24515D2F00DE1E94 /* ViewController.swift */,
+				D350642024541E4E0084244A /* CardViewController.swift */,
 				D36DEA7C24515D2F00DE1E94 /* Main.storyboard */,
 				D36DEA7F24515D3100DE1E94 /* Assets.xcassets */,
 				D36DEA8124515D3100DE1E94 /* LaunchScreen.storyboard */,
@@ -140,7 +140,7 @@
 			files = (
 				D36DEA7B24515D2F00DE1E94 /* ViewController.swift in Sources */,
 				D36DEA7724515D2F00DE1E94 /* AppDelegate.swift in Sources */,
-				D36DEA7924515D2F00DE1E94 /* SceneDelegate.swift in Sources */,
+				D350642124541E4E0084244A /* CardViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -294,7 +294,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.YashThakar.UIViewPropertyAnimator;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -312,7 +312,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.YashThakar.UIViewPropertyAnimator;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
