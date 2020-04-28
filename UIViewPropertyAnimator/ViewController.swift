@@ -28,14 +28,15 @@ class ViewController: UIViewController {
     }
     
     lazy var cardViewController: CardViewController = {
-        return self.storyboard?.instantiateViewController(identifier: "CardViewController") as! CardViewController
+        return self.storyboard?.instantiateViewController(withIdentifier: "CardViewController") as! CardViewController
     }()
     
     let cardHeight: CGFloat = 600.0
     var cardInitialHeight: CGFloat = 44.0
     
-    var runningAnimations = [UIViewPropertyAnimator]()
-    var animationProgressWhenInterrupted: CGFloat = 0.0
+    var runningAnimators = [UIViewPropertyAnimator]()
+    
+    var animationProgress = [CGFloat]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -63,34 +64,55 @@ class ViewController: UIViewController {
         let yPos = view.frame.height - (cardInitialHeight + bottomArea)
         cardViewController.view.frame = CGRect(x: 0, y: yPos, width: view.frame.width, height: cardHeight)
         
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleViewTap(_:)))
-        let panGesture = UIPanGestureRecognizer(target: self, action: #selector(handleViewPan(_:)))
-        
-        cardViewController.handleAreaView.addGestureRecognizer(tapGesture)
+        let panGesture = InstantPanGestureRecognizer(target: self, action: #selector(handleViewPan(_:)))
         cardViewController.handleAreaView.addGestureRecognizer(panGesture)
-    }
-    
-    @objc func handleViewTap(_ recognizer: UITapGestureRecognizer) {
-        animateTransitionIfNeeded(state: nextState, duration: 0.7)
     }
     
     @objc func handleViewPan(_ recognizer: UIPanGestureRecognizer) {
         switch recognizer.state {
         case .began:
-            startInteractiveTransition(state: nextState, duration: 0.7)
+           
+            animateTransitionIfNeeded(state: nextState, duration: 0.7)
+            runningAnimators.forEach { $0.pauseAnimation() }
+            animationProgress = runningAnimators.map { $0.fractionComplete }
+            
         case .changed:
+            
             let translation = recognizer.translation(in: cardViewController.handleAreaView)
             var fractionComplete = translation.y / cardHeight
             fractionComplete = cardVisible ? fractionComplete : -fractionComplete
-            updateInteractiveTransition(fractionCompleted: fractionComplete)
+            
+            for (index, animator) in runningAnimators.enumerated() {
+                animator.fractionComplete = fractionComplete + animationProgress[index]
+            }
+            
         case .ended:
-            continueInteractiveTransition()
+            
+            let yVelocity = recognizer.velocity(in: cardViewController.handleAreaView).y
+            let shouldFinish = yVelocity < 0
+            
+            if yVelocity == 0 {
+                runningAnimators.forEach { $0.continueAnimation(withTimingParameters: nil, durationFactor: 0) }
+                break
+            }
+            
+            switch nextState {
+            case .expanded:
+                if !shouldFinish && !runningAnimators[0].isReversed { runningAnimators.forEach { $0.isReversed = !$0.isReversed } }
+                if shouldFinish && runningAnimators[0].isReversed { runningAnimators.forEach { $0.isReversed = !$0.isReversed } }
+            case .collapsed:
+                if shouldFinish && !runningAnimators[0].isReversed { runningAnimators.forEach { $0.isReversed = !$0.isReversed } }
+                if !shouldFinish && runningAnimators[0].isReversed { runningAnimators.forEach { $0.isReversed = !$0.isReversed } }
+            }
+            
+            runningAnimators.forEach { $0.continueAnimation(withTimingParameters: nil, durationFactor: 0) }
+            
         default: break
         }
     }
     
     func animateTransitionIfNeeded(state: CardState, duration: TimeInterval) {
-        if !runningAnimations.isEmpty { return }
+        if !runningAnimators.isEmpty { return }
         
         let animator = UIViewPropertyAnimator(duration: duration, dampingRatio: 1.0) {
             switch state {
@@ -105,12 +127,21 @@ class ViewController: UIViewController {
                 self.cardViewController.handleAreaView.layer.cornerRadius = 0.0
             }
         }
-        animator.addCompletion { _ in
-            self.cardVisible = !self.cardVisible
-            self.runningAnimations.removeAll()
+        animator.addCompletion { position in
+            switch position {
+            case .start:
+                break
+            case .end:
+                self.cardVisible = !self.cardVisible
+            case .current:
+                break
+            default:
+                break
+            }
+            self.runningAnimators.removeAll()
         }
         animator.startAnimation()
-        runningAnimations.append(animator)
+        runningAnimators.append(animator)
         
         let blurAnimator = UIViewPropertyAnimator(duration: duration, curve: .linear) {
             switch state {
@@ -121,30 +152,17 @@ class ViewController: UIViewController {
             }
         }
         blurAnimator.startAnimation()
-        runningAnimations.append(blurAnimator)
-    }
-    
-    func startInteractiveTransition(state: CardState, duration: TimeInterval) {
-        if runningAnimations.isEmpty {
-            animateTransitionIfNeeded(state: state, duration: duration)
-        }
-        runningAnimations.forEach { animator in
-            animator.pauseAnimation()
-            animationProgressWhenInterrupted = animator.fractionComplete
-        }
-    }
-    
-    func updateInteractiveTransition(fractionCompleted: CGFloat) {
-        runningAnimations.forEach { animator in
-            animator.fractionComplete = animationProgressWhenInterrupted + fractionCompleted
-        }
-    }
-    
-    func continueInteractiveTransition() {
-        runningAnimations.forEach { animator in
-            animator.continueAnimation(withTimingParameters: nil, durationFactor: 0.0)
-        }
+        runningAnimators.append(blurAnimator)
     }
     
 }
 
+class InstantPanGestureRecognizer: UIPanGestureRecognizer {
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent) {
+        if (self.state == .began) { return }
+        super.touchesBegan(touches, with: event)
+        self.state = .began
+    }
+    
+}
