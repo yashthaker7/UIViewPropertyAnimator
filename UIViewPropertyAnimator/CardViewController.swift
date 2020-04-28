@@ -22,7 +22,7 @@ class CardViewController: UIViewController {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         
-        handleAreaView.roundCorner(corners: [.topLeft, .topRight], radius: 12.0)
+        handleAreaView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         handleView.layer.cornerRadius = 3.0
     }
     
@@ -39,16 +39,4 @@ extension CardViewController: UITableViewDataSource {
         cell.textLabel?.text = "\(indexPath.row)"
         return cell
     }
-}
-
-extension UIView {
-    
-    func roundCorner(corners: UIRectCorner, radius: CGFloat) {
-        let maskPath = UIBezierPath(roundedRect: self.bounds, byRoundingCorners: corners, cornerRadii: CGSize(width: radius, height: radius))
-        let maskLayer = CAShapeLayer()
-        maskLayer.frame = bounds
-        maskLayer.path = maskPath.cgPath
-        layer.mask = maskLayer
-    }
-    
 }

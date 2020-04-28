@@ -92,20 +92,25 @@ class ViewController: UIViewController {
     func animateTransitionIfNeeded(state: CardState, duration: TimeInterval) {
         if !runningAnimations.isEmpty { return }
         
-        let frameAnimator = UIViewPropertyAnimator(duration: duration, dampingRatio: 1.0) {
+        let animator = UIViewPropertyAnimator(duration: duration, dampingRatio: 1.0) {
             switch state {
             case .expanded:
                 self.cardViewController.view.frame.origin.y = self.view.frame.height - self.cardHeight
+                self.cardViewController.overlayView.alpha = 0.0
+                self.cardViewController.handleAreaView.layer.cornerRadius = 12.0
+                
             case .collapsed:
                 self.cardViewController.view.frame.origin.y = self.view.frame.height - self.cardInitialHeight
+                self.cardViewController.overlayView.alpha = 1.0
+                self.cardViewController.handleAreaView.layer.cornerRadius = 0.0
             }
         }
-        frameAnimator.addCompletion { _ in
+        animator.addCompletion { _ in
             self.cardVisible = !self.cardVisible
             self.runningAnimations.removeAll()
         }
-        frameAnimator.startAnimation()
-        runningAnimations.append(frameAnimator)
+        animator.startAnimation()
+        runningAnimations.append(animator)
         
         let blurAnimator = UIViewPropertyAnimator(duration: duration, curve: .linear) {
             switch state {
@@ -117,17 +122,6 @@ class ViewController: UIViewController {
         }
         blurAnimator.startAnimation()
         runningAnimations.append(blurAnimator)
-        
-        let alphaAnimator = UIViewPropertyAnimator(duration: duration, dampingRatio: 1.0) {
-            switch state {
-            case .expanded:
-                self.cardViewController.overlayView.alpha = 0.0
-            case .collapsed:
-                self.cardViewController.overlayView.alpha = 1.0
-            }
-        }
-        alphaAnimator.startAnimation()
-        runningAnimations.append(alphaAnimator)
     }
     
     func startInteractiveTransition(state: CardState, duration: TimeInterval) {
